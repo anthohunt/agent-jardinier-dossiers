@@ -75,6 +75,8 @@ description: Réparer le vieux vélo
 def depot():
     d = tempfile.mkdtemp()
     os.makedirs(os.path.join(d, "topics"))
+    os.makedirs(os.path.join(d, "scripts"))
+    open(os.path.join(d, "scripts", "normaliser.py"), "w").write("RENOMMES = {\n}\n")
     for s, t in DOSSIERS.items():
         open(os.path.join(d, "topics", s + ".md"), "w", encoding="utf-8").write(t)
     for c in (["init", "-q", "-b", "main"], ["config", "user.email", "essai@example.org"], ["config", "user.name", "Essai"],
@@ -111,9 +113,10 @@ class Essais(unittest.TestCase):
             self.assertRegex(t, r"^\S[^:\n]{0,79}\S : \S")
         for c in J.git(d, "rev-list", f"{avant}..HEAD").split():
             fichiers = J.git(d, "show", "--name-only", "--format=", c).split()
-            noms = {os.path.basename(f) for f in fichiers}
+            noms = {os.path.basename(f) for f in fichiers if not f.startswith("scripts/")} or {"outillage"}
             self.assertEqual(len(noms), 1, fichiers)
         self.assertTrue(r["fusions"] and r["clos"])
+        self.assertIn('"project_semis_tomates": "project_tomates"', open(os.path.join(d, "scripts", "normaliser.py")).read())
 
     def test_perte_detectee(self):
         d = depot()

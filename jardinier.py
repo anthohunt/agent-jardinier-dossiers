@@ -616,7 +616,15 @@ def fusionner(depot, garder, absorber, pourquoi, date):
     _ecrire(pr, texte)
     c2 = commiter(depot, [os.path.relpath(pb, depot), os.path.relpath(pr, depot)],
                   f"{humain(absorber)} : fusionné dans {garder} (jardinier)")
-    return [c for c in (c1, c2) if c]
+    # l'ancien nom rejoint la table des renommages du normaliseur du dépôt, s'il en a une (il réécrit les vieux liens)
+    c3 = None
+    pn = os.path.join(depot, "scripts", "normaliser.py")
+    if os.path.exists(pn):
+        t = _lire(pn)
+        if "RENOMMES = {" in t and f'"{absorber}":' not in t:
+            _ecrire(pn, t.replace("RENOMMES = {\n", "RENOMMES = {\n" + f'    "{absorber}": "{garder}",\n', 1))
+            c3 = commiter(depot, ["scripts/normaliser.py"], f"Normaliseur : {absorber} renommé en {garder} (fusion du jardinier)")
+    return [c for c in (c1, c2, c3) if c]
 
 
 def appliquer(depot, analyse, decisions, max_fusions=3, max_clos=5, date=None):
