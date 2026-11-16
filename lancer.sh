@@ -135,5 +135,16 @@ if [ "$MODE" = nuit ]; then
   # un échec passager (dépôt qui a bougé, injoignable) laisse la place au rattrapage de l'heure suivante
   case "$ERR" in *"a bougé"*|*injoignable*) [ "$H" = "${HEURES##* }" ] && touch "$N/.fini";; *) touch "$N/.fini";; esac
 fi
+# bilan du passage pour le tableau des agents permanents (16/11) : fait / où / trouvé, tiré du journal de ce passage
+python3 - "$L" "$N/rapport.txt" "${ERR:-}" <<'P' >> "$L" 2>/dev/null
+import json, re, sys
+L = open(sys.argv[1], errors="ignore").read().split(" début\n")[-1]
+nd = re.search(r"^(\d+) dossiers ;", L, re.M); cas = re.search(r"(\d+) cas à juger", L)
+try: t = open(sys.argv[2], errors="ignore").readline().strip()
+except Exception: t = ""
+ou = (["Dossiers : %s relus" % nd[1]] if nd else []) + (["Cas confiés à Claude : %s (doublons, isolés, périmés possibles)" % cas[1]] if cas else [])
+print("BILAN_JSON: " + json.dumps({"fait": "Entretien de nuit des dossiers : liens, en-têtes, isolés, doublons, périmés.", "ou": ou or ["Dossiers"],
+      "trouve": ("Échec : " + sys.argv[3]) if sys.argv[3] else (t or "Rapport vide.")}, ensure_ascii=False))
+P
 log "fin${ERR:+ : $ERR}"
 [ -z "$ERR" ]
