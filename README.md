@@ -69,6 +69,12 @@ Settings live outside the repository, in `donnees/lancer.local` (shell variables
 
 ---
 
+## Its page
+
+[Its page on ingevision.cloud](https://ingevision.cloud/en/ai-agents/?p=agent-jardinier-dossiers) presents what it does, in English and French.
+
+---
+
 ## Version française
 
 Chaque nuit, il entretient un dépôt git de dossiers Markdown comme un graphe : liens réciproques, liens réparés, aucun dossier isolé, doublons fusionnés sans perdre une ligne, dossiers périmés classés clos. Puis il écrit quelques lignes dans le rapport du matin.
@@ -82,3 +88,7 @@ Chaque nuit, il entretient un dépôt git de dossiers Markdown comme un graphe :
 - **Index** : régénéré par le générateur du dépôt.
 
 Claude ne modifie aucun fichier : il rend des décisions JSON sur une liste courte de candidats, le programme les applique. Un commit par dossier ; avant tout push, `verifier` contrôle que chaque ligne de contenu existe encore ; une seule ligne manquante et rien n'est poussé. Le rapport donne la commande de retour arrière de la nuit.
+
+### Sa fiche
+
+[Sa fiche sur ingevision.cloud](https://ingevision.cloud/agents-ia/?p=agent-jardinier-dossiers) présente ce qu'il fait, en français et en anglais.
